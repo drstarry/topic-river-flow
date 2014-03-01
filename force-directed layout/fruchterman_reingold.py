@@ -302,7 +302,7 @@ class Graph:
         # DRAW AlL NODES OF THE GRAPH
         for node in g.getNodes():
             # calculate position of this node
-            x0 = ((node.coordinate_x*scaling_factor + (center_distance/2)) / center_distance * c_width) + border
+            # x0 = ((node.coordinate_x*scaling_factor + (center_distance/2)) / center_distance * c_width) + border
             y0 = ((node.coordinate_y*scaling_factor + (center_distance/2)) / center_distance * c_height) + border
             # draw this node
             fill_color = "AAA"
@@ -575,135 +575,135 @@ class Graph:
         self.edges = []
 
 # these events handle the interaction with the mouse
-def event_button1_pressed(event):
-    # recalculate the position into node-coordinates
-    coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y0 = ((event.y - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_x1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+# def event_button1_pressed(event):
+#     # recalculate the position into node-coordinates
+#     coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y0 = ((event.y - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_x1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
 
-    for node in g.nodes:
-        if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
-            global grabed_node
-            grabed_node = node.id
+#     for node in g.nodes:
+#         if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
+#             global grabed_node
+#             grabed_node = node.id
 
-def event_button1_motion(event):
-    # recalculate the position into node-coordinates
-    coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y0 = ((event.y - border) * center_distance / c_height - center_distance/2) / scaling_factor
-    coordinate_x1 = (((event.x + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_height - center_distance/2) / scaling_factor
+# def event_button1_motion(event):
+#     # recalculate the position into node-coordinates
+#     coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y0 = ((event.y - border) * center_distance / c_height - center_distance/2) / scaling_factor
+#     coordinate_x1 = (((event.x + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_height - center_distance/2) / scaling_factor
 
-    global grabed_node
-    if grabed_node == '':
-        for node in g.nodes:
-            if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
-                grabed_node = node.id
-    else:
-        node = g.getNode(grabed_node)
-        distance_x = coordinate_x0 - node.coordinate_x
-        distance_y = coordinate_y0 - node.coordinate_y
-        node.coordinate_x = coordinate_x0
-        node.coordinate_y = coordinate_y0
+#     global grabed_node
+#     if grabed_node == '':
+#         for node in g.nodes:
+#             if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
+#                 grabed_node = node.id
+#     else:
+#         node = g.getNode(grabed_node)
+#         distance_x = coordinate_x0 - node.coordinate_x
+#         distance_y = coordinate_y0 - node.coordinate_y
+#         node.coordinate_x = coordinate_x0
+#         node.coordinate_y = coordinate_y0
 
-        radius = sqrt(distance_x*distance_x + distance_y*distance_y)
-        if radius != 0:
-            node.velocity = [distance_x, distance_y]
-            # ensure maximum velocity
-            if (node.velocity[0] > velocity_maximum):
-                node.velocity[0] = velocity_maximum
-            if (node.velocity[1] > velocity_maximum):
-                node.velocity[1] = velocity_maximum
-            if (node.velocity[0] < -1*velocity_maximum):
-                node.velocity[0] = -1*velocity_maximum
-            if (node.velocity[1] < -1*velocity_maximum):
-                node.velocity[1] = -1*velocity_maximum
+#         radius = sqrt(distance_x*distance_x + distance_y*distance_y)
+#         if radius != 0:
+#             node.velocity = [distance_x, distance_y]
+#             # ensure maximum velocity
+#             if (node.velocity[0] > velocity_maximum):
+#                 node.velocity[0] = velocity_maximum
+#             if (node.velocity[1] > velocity_maximum):
+#                 node.velocity[1] = velocity_maximum
+#             if (node.velocity[0] < -1*velocity_maximum):
+#                 node.velocity[0] = -1*velocity_maximum
+#             if (node.velocity[1] < -1*velocity_maximum):
+#                 node.velocity[1] = -1*velocity_maximum
 
-def event_button1_released(event):
-    global status_message
-    global grabed_node
-    grabed_node = ''
+# def event_button1_released(event):
+#     global status_message
+#     global grabed_node
+#     grabed_node = ''
 
-def event_button3_pressed(event):
-    # recalculate the position into node-coordinates
-    coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y0 = ((event.y - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_x1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+# def event_button3_pressed(event):
+#     # recalculate the position into node-coordinates
+#     coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y0 = ((event.y - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_x1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
 
-    for node in g.nodes:
-        if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
-            global grabed_component
-            global grabed_node
-            grabed_component = node.cc_number
-            grabed_node = node.id
+#     for node in g.nodes:
+#         if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
+#             global grabed_component
+#             global grabed_node
+#             grabed_component = node.cc_number
+#             grabed_node = node.id
 
-def event_button3_motion(event):
-    # recalculate the position into node-coordinates
-    coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y0 = ((event.y - border) * center_distance / c_height - center_distance/2) / scaling_factor
-    coordinate_x1 = (((event.x + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
-    coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_height - center_distance/2) / scaling_factor
+# def event_button3_motion(event):
+#     # recalculate the position into node-coordinates
+#     coordinate_x0 = ((event.x - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y0 = ((event.y - border) * center_distance / c_height - center_distance/2) / scaling_factor
+#     coordinate_x1 = (((event.x + circle_diameter*scaling_factor) - border) * center_distance / c_width - center_distance/2) / scaling_factor
+#     coordinate_y1 = (((event.y + circle_diameter*scaling_factor) - border) * center_distance / c_height - center_distance/2) / scaling_factor
 
-    global grabed_component
-    global grabed_node
-    if grabed_component == '' and grabed_node == '':
-        for node in g.nodes:
-            if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
-                grabed_component = node.cc_number
-                grabed_node = node.id
-    else:
-        # calculate the position-difference for the grabed node
-        node = g.getNode(grabed_node)
-        distance_x = coordinate_x0 - node.coordinate_x
-        distance_y = coordinate_y0 - node.coordinate_y
-        for node in g.nodes:
-            if node.cc_number == grabed_component:
-                node.coordinate_x += distance_x
-                node.coordinate_y += distance_y
+#     global grabed_component
+#     global grabed_node
+#     if grabed_component == '' and grabed_node == '':
+#         for node in g.nodes:
+#             if node.coordinate_x > coordinate_x0 and node.coordinate_x < coordinate_x1 and node.coordinate_y > coordinate_y0 and node.coordinate_y < coordinate_y1:
+#                 grabed_component = node.cc_number
+#                 grabed_node = node.id
+#     else:
+#         # calculate the position-difference for the grabed node
+#         node = g.getNode(grabed_node)
+#         distance_x = coordinate_x0 - node.coordinate_x
+#         distance_y = coordinate_y0 - node.coordinate_y
+#         for node in g.nodes:
+#             if node.cc_number == grabed_component:
+#                 node.coordinate_x += distance_x
+#                 node.coordinate_y += distance_y
 
-                radius = sqrt(distance_x*distance_x + distance_y*distance_y)
-                if radius != 0:
-                    node.velocity = [distance_x, distance_y]
-                    # ensure maximum velocity
-                    if (node.velocity[0] > velocity_maximum):
-                        node.velocity[0] = velocity_maximum
-                    if (node.velocity[1] > velocity_maximum):
-                        node.velocity[1] = velocity_maximum
-                    if (node.velocity[0] < -1*velocity_maximum):
-                        node.velocity[0] = -1*velocity_maximum
-                    if (node.velocity[1] < -1*velocity_maximum):
-                        node.velocity[1] = -1*velocity_maximum
+#                 radius = sqrt(distance_x*distance_x + distance_y*distance_y)
+#                 if radius != 0:
+#                     node.velocity = [distance_x, distance_y]
+#                     # ensure maximum velocity
+#                     if (node.velocity[0] > velocity_maximum):
+#                         node.velocity[0] = velocity_maximum
+#                     if (node.velocity[1] > velocity_maximum):
+#                         node.velocity[1] = velocity_maximum
+#                     if (node.velocity[0] < -1*velocity_maximum):
+#                         node.velocity[0] = -1*velocity_maximum
+#                     if (node.velocity[1] < -1*velocity_maximum):
+#                         node.velocity[1] = -1*velocity_maximum
 
-def event_button3_released(event):
-    global status_message
-    global grabed_component
-    global grabed_node
-    grabed_component = ''
-    grabed_node = ''
+# def event_button3_released(event):
+#     global status_message
+#     global grabed_component
+#     global grabed_node
+#     grabed_component = ''
+#     grabed_node = ''
 
-def key_pressed(event):
-    global grabed_node
-    global grabed_component
-    if event.char == ' ':
-        if grabed_node != '':
-            if grabed_component == '':
-                # change movable-state of this node
-                node = g.getNode(grabed_node)
-                node.movable = 1 - node.movable
-            else:
-                # change movable-state of this component
-                node_movable = g.getNode(grabed_node).movable
-                print node_movable
-                for node in g.nodes:
-                    if node.cc_number == grabed_component:
-                        node.movable = 1 - node_movable
-    if event.char == 'e':
-        global show_energie_in_background
-        show_energie_in_background = 1 - show_energie_in_background
-    if event.char == 'i':
-        global show_textinformation_in_background
-        show_textinformation_in_background = 1 - show_textinformation_in_background
+# def key_pressed(event):
+#     global grabed_node
+#     global grabed_component
+#     if event.char == ' ':
+#         if grabed_node != '':
+#             if grabed_component == '':
+#                 # change movable-state of this node
+#                 node = g.getNode(grabed_node)
+#                 node.movable = 1 - node.movable
+#             else:
+#                 # change movable-state of this component
+#                 node_movable = g.getNode(grabed_node).movable
+#                 print node_movable
+#                 for node in g.nodes:
+#                     if node.cc_number == grabed_component:
+#                         node.movable = 1 - node_movable
+#     if event.char == 'e':
+#         global show_energie_in_background
+#         show_energie_in_background = 1 - show_energie_in_background
+#     if event.char == 'i':
+#         global show_textinformation_in_background
+#         show_textinformation_in_background = 1 - show_textinformation_in_background
 
 # read lines of file with graph data
 print
@@ -750,18 +750,18 @@ c_height = h - border*2
 
 root.title("Force directed layout of graphs (by Mathias Bader) - version 0.1")
 c = tk.Canvas(root, width=c_width+2*border, height=c_height+2*border, bg='white')
-# left-click
-c.bind("<Button-1>", event_button1_pressed)
-c.bind("<B1-Motion>", event_button1_motion)
-c.bind("<ButtonRelease-1>", event_button1_released)
-# right-click
-c.bind("<Button-3>", event_button3_pressed)
-c.bind("<B3-Motion>", event_button3_motion)
-c.bind("<ButtonRelease-3>", event_button3_released)
-# keyboard key
-c.bind("<Key>", key_pressed)
-c.pack()
-c.focus_set()
+# # left-click
+# c.bind("<Button-1>", event_button1_pressed)
+# c.bind("<B1-Motion>", event_button1_motion)
+# c.bind("<ButtonRelease-1>", event_button1_released)
+# # right-click
+# c.bind("<Button-3>", event_button3_pressed)
+# c.bind("<B3-Motion>", event_button3_motion)
+# c.bind("<ButtonRelease-3>", event_button3_released)
+# # keyboard key
+# c.bind("<Key>", key_pressed)
+# c.pack()
+# c.focus_set()
 
 
 
