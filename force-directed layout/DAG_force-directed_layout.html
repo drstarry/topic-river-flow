@@ -28,8 +28,8 @@ function group(d) { return d.group; }
 var color = d3.scale.category10();
 function colorByGroup(d) { return color(group(d)); }
 
-var width = 1000,
-    height = 800;
+var width = 2500,
+    height = 2000;
 
 var svg = d3.select('#viz')
     .append('svg')
@@ -124,12 +124,12 @@ d3.json('miserables.json', function(err, data) {
         .call( force.drag );
 
     node.append('circle')
-        .attr('r', 20)
+        .attr('r', 10)
         .attr('fill', colorByGroup)
-        .attr('fill-opacity', 0.3);
+        .attr('fill-opacity', 0.6);
 
     node.append('circle')
-        .attr('r', 4)
+        .attr('r', 2)
         .attr('stroke', 'black');
 
     force
