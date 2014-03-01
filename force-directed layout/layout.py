@@ -18,6 +18,6 @@ visual_style["edge_width"] = [1 + 2 * int(is_formal) for is_formal in g.es["is_f
 visual_style["layout"] = layout
 visual_style["bbox"] = (300, 300)
 visual_style["margin"] = 20
-# plot(g, **visual_style)
+plot(g, **visual_style)
 
-print g
+# print g
