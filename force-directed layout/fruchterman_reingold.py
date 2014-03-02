@@ -68,6 +68,12 @@ class Node:
         self.neighbour_ids.remove(node_id)
         self.degree -= 1
 
+class Edge:
+    def __init__(self,source,target,weight):
+        self.source = source
+        self.target = target
+        self.weight = weight
+
 # Class for graph
 class Graph:
     def __init__(self):
@@ -95,10 +101,8 @@ class Graph:
         # adds an edge between two nodes
         # add weight of each edge
         if node_id_1 != node_id_2 and node_id_1 >= 0 and node_id_2 >= 0 and not self.isEdge(node_id_1, node_id_2):
-            if node_id_1 < node_id_2:
-                self.edges.append((node_id_1, node_id_2, weight))
-            else:
-                self.edges.append((node_id_2, node_id_1, weight))
+
+            self.edges.append(Edge(node_id_1, node_id_2,weight))
             # search for the two node-objects with fitting ids
             node1 = self.getNode(node_id_1)
             node2 = self.getNode(node_id_2)
@@ -184,6 +188,20 @@ class Graph:
         for node in self.nodes:
             print node.id,'(',node.coordinate_x,',',node.coordinate_y,'),group:',node.group
 
+    def saveJson(self):
+        nodes = []
+        links = []
+        for node in self.nodes:
+            nodes.append({"id":node.id,"group":node.group,"x":node.coordinate_x,"y":node.coordinate_y})
+        for edge in self.edges:
+            links.append({"source":edge.source,"target":edge.target,"weight":edge.weight})
+        g = dict({"nodes":nodes,"links":links})
+        f = open("topic.json",'w')
+
+        print g
+
+
+
     def isEdge(self, node_id_1, node_id_2):
         if node_id_1 > node_id_2:
             # switch the two node-ids (edges are always saved with smaller id first)
@@ -208,7 +226,7 @@ class Graph:
         # sets random positions for all nodes
         for node in self.nodes:
             #fix x (how to scale?)
-            node.coordinate_x = node.group * center_distance - (center_distance/2)
+            node.coordinate_x = (node.group * center_distance - (center_distance/2))/10
             node.coordinate_y = random.random() * center_distance - (center_distance/2)
 
     def calculateStep(self):
@@ -333,14 +351,11 @@ if __name__ == '__main__':
             (node_1, node_2, weight) = line_array
             g.addEdge(node_1, node_2, weight)
 
-    # calculate the connected components:
-    # g.calculateConnectedComponents()
-
-    # set the position of all nodes in the graph randomly to
-    # a number between 0 and 10
     g.SetRandomNodePosition()
 
-    for i in range(1,50):
+    for i in range(1,300):
         g.calculateStep()
 
     g.printData()
+
+    g.saveJson()
