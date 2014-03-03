@@ -33,9 +33,9 @@ show_energie_in_background = 1
 show_textinformation_in_background = 1
 
 #screen properties
-c_width = 1000
-c_height = 600
-border = 20
+c_width = 400
+c_height = 200
+border = 1
 
 
 # Class for Nodes
@@ -196,11 +196,10 @@ class Graph:
         for edge in self.edges:
             links.append({"source":edge.source,"target":edge.target,"weight":edge.weight})
         g = dict({"nodes":nodes,"links":links})
-        f = open("topic.json",'w')
+        f = open("gragh.dat",'w')
+
 
         print g
-
-
 
     def isEdge(self, node_id_1, node_id_2):
         if node_id_1 > node_id_2:
@@ -228,6 +227,81 @@ class Graph:
             #fix x (how to scale?)
             node.coordinate_x = (node.group * center_distance - (center_distance/2))/10
             node.coordinate_y = random.random() * center_distance - (center_distance/2)
+
+    def paintGraph(self):
+        # clear the screen
+        # for c_item in c.find_all():
+        #     c.delete(c_item)
+
+        # # plot the energie vs time in the background of the window
+        # if show_energie_in_background == 1:
+        #     if show_energies_in_background == 1:
+        #         global all_energies
+        #         energies_count = len(all_energies)
+        #         # only show the last 200 energies at maximum
+        #         if energies_count > 200:
+        #             start_point = energies_count - 200
+        #         else:
+        #             start_point = 0
+        #         for i in range(start_point, energies_count):
+        #             c.create_rectangle(border+(c_width)/(energies_count-start_point)*(i-start_point), border+c_height-(c_height/highest_energy*all_energies[i]), border + (c_width)/(energies_count-start_point)+(c_width)/(energies_count-start_point)*(i-start_point), c_height+border, fill="#eee", outline="#ddd")
+        # # draw the coordinate system with the center
+        # c.create_line (border, c_height/2+border, (c_width+border), c_height/2+border, fill="#EEEEEE")
+        # c.create_line (c_width/2+border, border, c_width/2+border, c_height+border*2+border, fill="#EEEEEE")
+
+        # DRAW AlL EDGES OF THE GRAPH
+        for node in g.getNodes():
+            # calculate position of this node
+            x0 = ((node.coordinate_x*scaling_factor + (center_distance/2)) / center_distance * c_width) + border
+            y0 = ((node.coordinate_y*scaling_factor + (center_distance/2)) / center_distance * c_height) + border
+            # draw all the edges to neighbors of this node
+            for neighbor_id in node.neighbour_ids:
+                node2 = self.getNode(neighbor_id)
+                if (node.id > node2.id):
+                    x1 = ((node2.coordinate_x*scaling_factor + (center_distance/2)) / center_distance * c_width) + border
+                    y1 = ((node2.coordinate_y*scaling_factor + (center_distance/2)) / center_distance * c_height) + border
+                    # c.create_line(x0 + circle_diameter*scaling_factor / 2, y0 + circle_diameter*scaling_factor / 2, x1 + circle_diameter*scaling_factor / 2, y1 + circle_diameter*scaling_factor / 2)
+
+        # DRAW AlL NODES OF THE GRAPH
+        for node in g.getNodes():
+            # calculate position of this node
+            x0 = ((node.coordinate_x*scaling_factor + (center_distance/2)) / center_distance * c_width) + border
+            y0 = ((node.coordinate_y*scaling_factor + (center_distance/2)) / center_distance * c_height) + border
+            # draw this node
+            fill_color = "AAA"
+            if (node.cc_number <= 5):
+                if (node.cc_number == 1):
+                    fill_color = "0C0"	# green
+                if (node.cc_number == 2):
+                    fill_color = "00C"	# blue
+                if (node.cc_number == 3):
+                    fill_color = "C00"	# red
+                if (node.cc_number == 4):
+                    fill_color = "FF2"	# yellow
+                if (node.cc_number == 5):
+                    fill_color = "FFB63D"	# orange
+                if node.movable == 1:
+                    c.create_oval(x0, y0, x0 + circle_diameter*scaling_factor, y0 + circle_diameter*scaling_factor, fill="#" + fill_color)
+                else:
+                    c.create_oval(x0, y0, x0 + circle_diameter*scaling_factor, y0 + circle_diameter*scaling_factor, fill="#000")
+            else:
+                if (node.cc_number == 6):
+                    fill_color = "FF2"	# yellow
+                if (node.cc_number == 7):
+                    fill_color = "00C"	# blue
+                if (node.cc_number == 8):
+                    fill_color = "C00"	# red
+                if (node.cc_number == 9):
+                    fill_color = "0C0"	# green
+                if node.movable == 1:
+                    c.create_rectangle(x0, y0, x0 + circle_diameter*scaling_factor, y0 + circle_diameter*scaling_factor, fill="#" + fill_color)
+                else:
+                    c.create_rectangle(x0, y0, x0 + circle_diameter*scaling_factor, y0 + circle_diameter*scaling_factor, fill="#000")
+            # write the id under the node
+            c.create_text(x0, y0 + circle_diameter*scaling_factor + 20, anchor=tk.SW, text=str(node.id))
+            # c.create_text(x0, y0 + circle_diameter*scaling_factor + 40, anchor=tk.SW, text=str(node.cc_number), fill="#008800")
+        c.protocol("WM_DELETE_WINDOW", c.destroy)
+        c.update()
 
     def calculateStep(self):
         new_overall_energie = 0
@@ -285,39 +359,39 @@ class Graph:
                 self.calculation_finished = 1
 
         # set the new position influenced by the force
-        global thermal_energie
-        if timestep == 50 and thermal_energie > 0:
-            thermal_energie = 0.2
-        if timestep == 110 and thermal_energie > 0:
-            thermal_energie = 0.1
-        if timestep == 150 and thermal_energie > 0:
-            thermal_energie = 0.0
-        for node in self.nodes:
-            (force_coulomb_x, force_coulomb_y) = node.force_coulomb
-            (force_harmonic_x, force_harmonic_y) = node.force_harmonic
-            # node.coordinate_x += force_coulomb_x + force_harmonic_x
-            # node.coordinate_y += force_coulomb_y + force_harmonic_y
-
-            node.velocity[0] += (force_coulomb_x + force_harmonic_x)*0.1
-            node.velocity[1] += (force_coulomb_y + force_harmonic_y)*0.1
-            # ensure maximum velocity
-            if (node.velocity[0] > velocity_maximum):
-                node.velocity[0] = velocity_maximum
-            if (node.velocity[1] > velocity_maximum):
-                node.velocity[1] = velocity_maximum
-            if (node.velocity[0] < -1*velocity_maximum):
-                node.velocity[0] = -1*velocity_maximum
-            if (node.velocity[1] < -1*velocity_maximum):
-                node.velocity[1] = -1*velocity_maximum
-            # get friction into play
-            if node.velocity[0] > friction:
-                node.velocity[0] -= friction
-            if node.velocity[0] < -1*friction:
-                node.velocity[0] += friction
-            if node.velocity[1] > friction:
-                node.velocity[1] -= friction
-            if node.velocity[1] < -1*friction:
-                node.velocity[1] += friction
+        # global thermal_energie
+        # if timestep == 50 and thermal_energie > 0:
+        #     thermal_energie = 0.2
+        # if timestep == 110 and thermal_energie > 0:
+        #     thermal_energie = 0.1
+        # if timestep == 150 and thermal_energie > 0:
+        #     thermal_energie = 0.0
+        # for node in self.nodes:
+        #     (force_coulomb_x, force_coulomb_y) = node.force_coulomb
+        #     (force_harmonic_x, force_harmonic_y) = node.force_harmonic
+        #     # node.coordinate_x += force_coulomb_x + force_harmonic_x
+        #     # node.coordinate_y += force_coulomb_y + force_harmonic_y
+        #
+        #     node.velocity[0] += (force_coulomb_x + force_harmonic_x)*0.1
+        #     node.velocity[1] += (force_coulomb_y + force_harmonic_y)*0.1
+        #     # ensure maximum velocity
+        #     if (node.velocity[0] > velocity_maximum):
+        #         node.velocity[0] = velocity_maximum
+        #     if (node.velocity[1] > velocity_maximum):
+        #         node.velocity[1] = velocity_maximum
+        #     if (node.velocity[0] < -1*velocity_maximum):
+        #         node.velocity[0] = -1*velocity_maximum
+        #     if (node.velocity[1] < -1*velocity_maximum):
+        #         node.velocity[1] = -1*velocity_maximum
+        #     # get friction into play
+        #     if node.velocity[0] > friction:
+        #         node.velocity[0] -= friction
+        #     if node.velocity[0] < -1*friction:
+        #         node.velocity[0] += friction
+        #     if node.velocity[1] > friction:
+        #         node.velocity[1] -= friction
+        #     if node.velocity[1] < -1*friction:
+        #         node.velocity[1] += friction
 
             # FINALLY SET THE NEW POSITION
             if node.id != grabed_node or node.cc_number == grabed_component:
@@ -353,8 +427,30 @@ if __name__ == '__main__':
 
     g.SetRandomNodePosition()
 
-    for i in range(1,300):
+    # create the window object for painting the graph on
+    c = tk.Tk()
+
+
+    # make it cover the entire screen
+    #w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+    # root.overrideredirect(1)
+    # root.geometry("%dx%d+0+0" % (c_width,c_height))
+
+    # c_width = w - border*2
+    # c_height = h - border*2
+
+    # root.title("Force directed layout of graphs ")
+    # c = tk.Canvas(root, width=c_width+2*border, height=c_height+2*border, bg='white')
+
+    # g.paintGraph()
+    # while (not g.calculation_finished or dont_finish_calculating):
+    for i in range(1,200):
         g.calculateStep()
+        print timestep
+        timestep += 1
+        # g.paintGraph()
+    g.paintGraph()
+    c.mainloop()
 
     g.printData()
 
